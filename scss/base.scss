@@ -1,0 +1,81 @@
+@import 'reset';
+@import 'normalize';
+@import 'placeholder-labels';
+@import 'compass/css3/flexbox';
+@import 'fontawesome/font-awesome';
+
+body {
+    width: 700px;
+    margin: 15px auto auto auto;
+}
+.fieldrow {
+    @include display-flex;
+    @include align-items(center);
+    @include justify-content(space-between);
+    margin-bottom: 5px;
+}
+.setuprow {
+    @include display-flex;
+    @include align-items(center);
+    @include justify-content(start);
+}
+#apikey {
+    max-width: 300px;
+}
+#slackurl {
+    color: #888;
+    font-size: 20px;
+    margin: auto 50px auto 5px;
+}
+h2 {
+    text-align: center;
+    color: #333;
+}
+.field {
+    max-width: 180px;
+}
+.fa {
+    color: #aaa;
+}
+.fa-question-circle {
+    color: #e5e5e5;
+    font-size: 20px;
+    float: right;
+    margin-right: 6px;
+    margin-top: -29px;
+    position: relative;
+    z-index: 2;
+    span {
+        display: none;
+    }
+    &:hover span {
+        float: right;
+        margin-left: 20px;
+        margin-top: -24px;
+        position: absolute;
+        z-index: 3;
+        border: 1px solid #888;
+        background-color: white;
+        display: inline;
+        padding: 4px;
+        font-size: 15px;
+        width: 200px;
+        color: #888;
+    }
+}
+.fa-plus, .fa-minus {
+    cursor: pointer;
+}
+
+.submit {
+    max-width: 150px;
+}
+
+.content > span:first-child {
+    float: left;
+    position: absolute;
+}
+.content > span:last-child {
+    float: right;
+    width: 535px;
+}
