@@ -17,7 +17,7 @@ window.onload = () ->
     )
     container.append generate_where_row(i)
     generate_request(params, (files) ->
-        augment_and_filter_request(files, () ->
+        augment_and_filter_request(files, (files) ->
             _(files).forEach((file) ->
                 $('#data').append build_file_view(file)
                 global_files.push file
@@ -29,18 +29,20 @@ window.onload = () ->
     $('#submit_button').on('click', redir_submit_link)
 
 doValidityCheck = (event) ->
-    input = $(event.target)
-    field = input.parent()
-    mid = $("#where_oper_#{getID(input)}")
-    sel = (m, k) -> if m == k then 'selected' else ''
-    style = (border, midHTML, valid_text) ->
+    id    = getID($(event.target))
+    left  = $("#where_left_#{id}")
+    right = $("#where_right_#{id}")
+    mid   = $("#where_oper_#{id}")
+    sel   = (m, k) -> if m == k then 'selected' else ''
+    style = (input, border, midHTML, valid_text) ->
+        field = $(input.parent())
         field.css('border-color', border)
         field.children('label').css('background-color', border)
-        $("#valid_text_#{getID(input)} span").html(valid_text)
-        mid.html(midHTML)
+        $("#valid_text_#{id} span").html(valid_text) if valid_text
+        mid.html(midHTML) if midHTML
 
-    if input.val().length == 0 or !_(_(fields).keys()).contains(input.val())
-        style((if input.val().length > 0 then 'red' else '#aaa'),
+    if left.val().length == 0 or !_(_(fields).keys()).contains(left.val())
+        style(left, (if left.val().length > 0 then 'red' else '#aaa'),
             _.map(operator_names, (v, k) ->
                "<option value='#{k}' #{sel(mid.val(), k)}>#{v}</option>"
             ).join("\n"),
@@ -48,12 +50,15 @@ doValidityCheck = (event) ->
         )
     else
         html = _.map(hash_filter(operator_names, (v, k) ->
-            k == '' || _.contains(fields[input.val()].ops, k)
+            k == '' || _.contains(fields[left.val()].ops, k)
         ), (v, k) ->
             "<option value='#{k}' #{sel(mid.val(), k)}>#{v}</option>"
         ).join("\n")
-        style('#aaa', html, fields[input.val()].valid_text)
-
+        style(left, '#aaa', html, fields[left.val()].valid_text)
+        rightcolor = '#aaa'
+        if not fields[left.val()].valid(right.val())
+            rightcolor = 'red'
+        style(right, rightcolor)
 
 delete_button = () ->
     out = $("<span class='field' id='delete_button'><input type='button' value='Delete All'></input></span>")
@@ -176,8 +181,40 @@ do_request = (params, callback, submit, users) ->
         submit.count = _val(params.limit) if '_' == _op(params.limit)
         do_slack_request('files.list', submit, 'files', callback)
 
+toBytes = (size) ->
+    c = size.substr(-1)
+    f = size.substr(0, size.length-1)
+    if c == 'K'
+        f * 1000
+    else if c == 'M'
+        f * 1000 * 1000
+    else if c == 'G'
+        f * 1000 * 1000 * 1000
+    else
+        size
+
+cmp = (a, op, b) ->
+    if not b
+        op = _op(b)
+        b = _val(b)
+
+    if op == '_'
+        a == b
+    else if op == '!'
+        a != b
+    else if op == '>'
+        +a > +b
+    else if op == '<'
+        +a < +b
+    else if op == '~'
+        new RegExp(b).test(a)
+    else
+        false
+
 filter = (files) ->
     return _(files).filter((file) ->
+        if params.size
+            return cmp(file.size, _op(params.size), toBytes(_val(params.size)))
         true
     )
 
@@ -344,7 +381,7 @@ fields = {
     'size': {
         'use': 'filter',
         'ops': op_no_regex,
-        'valid': (size) -> /^[0-9]*[KMG]?$/.test(limit)
+        'valid': (size) -> /^[0-9]*[KMG]?$/.test(size)
         'valid_text': "A number representing the size in bytes of the file. May end in 'K', 'M', or 'G'"
     }
 }
