@@ -6,20 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/base.css" media="screen">
+    <script src="lib/jquery-1.11.3.min.js"></script>
     <script src="lib/underscore-min.js"></script>
+    <script src="lib/dentist.min.js"></script>
     <script src="js/index.js"></script>
 </head>
 <body>
     <div class='setuprow'>
-        <span class='apisetup'>
-            <div class='field'>
-                <input type='text' id='url' placeholder='Team URL' required />
-                <label for='url'>Team URL</label>
-            </div>
-        </span>
-        <span id='slackurl'>.slack.com</span>
-        <span class='apisetup'>
-            <div class='field' id='apikey'>
+        <span>
+            <div class='field stay-label' id='apikey'>
                 <input type='text' id='api' placeholder='API Key' required />
                 <label for='api'>API Key</label>
             </div>
@@ -27,15 +22,18 @@
     </div>
     <h2>Batch File Manager</h2>
     <div class='content'>
-        <span>
+        <span class='column'>
             <div class='field submit'>
                 <input type='button' id='submit_button' value="select * where" />
-                <label for='submit_button'>Submitting...</label>
             </div>
         </span>
-        <span id='selectrows'>
+        <span id='selectrows' class='column'>
             <!-- JS inserts stuff here -->
         </span>
+    </div>
+    <div id='data'>
+        <span id='loading_icon' class='fa fa-spinner fa-pulse'></span>
+        <!-- also here -->
     </div>
     </body>
 </html>

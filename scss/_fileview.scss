@@ -1,0 +1,49 @@
+@import 'compass/css3/border-radius';
+.fileview {
+    @include display-flex;
+    @include justify-content(start);
+    @include border-radius(5px);
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin-bottom: 5px;
+    & img {
+        @include border-radius(5px);
+        margin-right: 5px;
+    }
+}
+.fv-metadata {
+    @include display-flex;
+    @include flex-direction(column);
+    @include justify-content(start);
+    @include flex(1);
+    & > * {
+        margin-bottom: 5px;
+        &:last-child {
+            margin-bottom: 0px;
+        }
+    }
+}
+.fv-spacer {
+    @include border-radius(5px);
+    width: 2px;
+    max-width: 2px;
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: #ddd;
+}
+
+.fv-img-title {
+    font-size: 18px;
+}
+.fv-user {
+    font-size: 14px;
+}
+.fv-datetime {
+    font-size: 14px;
+    margin-top: auto;
+}
+#delete_button {
+    margin-top: 7px;
+    width: 700px;
+    max-width: 700px;
+}

@@ -3,29 +3,22 @@
 @import 'placeholder-labels';
 @import 'compass/css3/flexbox';
 @import 'fontawesome/font-awesome';
+@import 'fileview';
 
 body {
     width: 700px;
     margin: 15px auto auto auto;
-}
-.fieldrow {
     @include display-flex;
-    @include align-items(center);
-    @include justify-content(space-between);
-    margin-bottom: 5px;
+    @include flex-direction(column);
 }
+
 .setuprow {
     @include display-flex;
     @include align-items(center);
-    @include justify-content(start);
 }
 #apikey {
-    max-width: 300px;
-}
-#slackurl {
-    color: #888;
-    font-size: 20px;
-    margin: auto 50px auto 5px;
+    max-width: 700px;
+    width: 700px;
 }
 h2 {
     text-align: center;
@@ -50,7 +43,12 @@ h2 {
     }
     &:hover span {
         float: right;
-        margin-left: 20px;
+        &.valid-left {
+            margin-left: 20px;
+        }
+        &.valid-right {
+            margin-left: -135px;
+        }
         margin-top: -24px;
         position: absolute;
         z-index: 3;
@@ -59,7 +57,8 @@ h2 {
         display: inline;
         padding: 4px;
         font-size: 15px;
-        width: 200px;
+        max-width: 200px;
+        width: 120px;
         color: #888;
     }
 }
@@ -71,11 +70,39 @@ h2 {
     max-width: 150px;
 }
 
-.content > span:first-child {
-    float: left;
-    position: absolute;
+.content {
+    @include display-flex;
+    @include justify-content(start);
+    padding: 3px;
 }
-.content > span:last-child {
-    float: right;
-    width: 535px;
+.column {
+    @include display-flex;
+    @include flex-direction(column);
+    @include justify-content(start);
+    margin: 3px;
+}
+.fieldrow {
+    @include display-flex;
+    @include align-items(center);
+    @include justify-content(space-between);
+    margin-bottom: 5px;
+    > * {
+        margin: 0px 3px;
+        &:first-child {
+            margin-left: 0px;
+        }
+        &:last-child {
+            margin-right: 0px;
+        }
+    }
+}
+
+#data {
+    @include display-flex;
+    @include flex-direction(column);
+    @include justify-content(start);
+}
+#loading_icon {
+    @include align-self(center);
+    font-size: 32px;
 }

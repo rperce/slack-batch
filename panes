@@ -1,0 +1,5 @@
+#!/bin/sh
+tmux split-window -v -d -l 5 python -m http.server
+tmux split-window -h compass watch --sass-dir "scss" --css-dir "css"
+clear
+exec coffee -wco js/ coffee/

@@ -28,6 +28,9 @@
    box-sizing: border-box;
    -webkit-appearance: none;
 }
+.field input[type='button'] {
+    border-bottom: 2px solid #aaa;
+}
 .field select:invalid {
   color: #aaa;
 }
@@ -36,11 +39,19 @@
   Show label instead of placeholder
 */
 .field input:focus,
-.field select:focus {
+.field select:focus,
+.field.stay-label input:valid,
+.field.stay-label select:valid {
   height: 28px
 }
+.field input[type='button']:focus,
+.field input[type='button']:valid {
+    height: 36px;
+}
 .field input:focus ~ label,
-.field select:focus ~ label {
+.field select:focus ~ label,
+.field.stay-label input:valid ~ label,
+.field.stay-label select:valid ~ label {
   color: #fff;
   max-height: 15px;
 }
