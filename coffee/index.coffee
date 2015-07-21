@@ -18,6 +18,7 @@ window.onload = () ->
     container.append generate_where_row(i)
     generate_request(params, (files) ->
         augment_and_filter_request(files, (files) ->
+            files = filterPost(files)
             _(files).forEach((file) ->
                 $('#data').append build_file_view(file)
                 global_files.push file
@@ -193,10 +194,14 @@ toBytes = (size) ->
     else
         size
 
+toBool = (s) ->
+    true if _(['true', 'yes']).contains(s)
+    false
+
 cmp = (a, op, b) ->
-    if not b
-        op = _op(b)
-        b = _val(b)
+    if not b # op is actually the param value in this case
+        b = _val(op)
+        op = _op(op)
 
     if op == '_'
         a == b
@@ -211,11 +216,41 @@ cmp = (a, op, b) ->
     else
         false
 
-filter = (files) ->
+filterPre = (files) ->
     return _(files).filter((file) ->
+        keep = yes
         if params.size
-            return cmp(file.size, _op(params.size), toBytes(_val(params.size)))
-        true
+            keep = no unless cmp(file.size, _op(params.size), toBytes(_val(params.size)))
+
+        if params.name
+            keep = no unless cmp(file.name, params.name)
+
+        if params.title
+            keep = no unless cmp(file.title, params.title)
+
+        if params.is_public
+            keep = no unless cmp(file.is_public, _op(params.is_public), toBool(params.is_public))
+
+        keep
+    )
+
+filterPost = (files) ->
+    return _(files).filter((file) ->
+        keep = yes
+        if params.shared_in
+            a  = file.shared_in
+            op = _op(params.shared_in)
+            b  = _val(params.shared_in)
+            b = b.substr(1) if b.substr(0,1) == '#'
+            console.log("a: #{a}")
+            console.log("b: #{b}")
+            if op == '~'
+                keep = no unless _.any(a, (chan) -> new RegExp(b).test(chan))
+            else if op == '_'
+                keep = no unless _.any(a, (chan) -> chan == b)
+            else if op == '!'
+                keep = no unless _.every(a, (chan) -> chan != b)
+        keep
     )
 
 augment = (files, decode_ids, callback) ->
@@ -232,7 +267,7 @@ augment = (files, decode_ids, callback) ->
     callback(files)
 
 augment_and_filter_request = (files, callback) ->
-    files = filter(files)
+    files = filterPre(files)
     count = 0
 
     decode_ids = {}
@@ -281,8 +316,8 @@ build_file_view = (file, index) ->
                 <img src=#{file.thumb_64} />
             </a>
             <div class='fv-metadata'>
-                <span class='fv-img-title'>#{file.title}</span>
-                <span class='fv-user'>(#{file.user_name}) | (#{file.size})</span>
+                <span class='fv-img-title'>#{file.title} (#{file.name})</span>
+                <span class='fv-user'>(#{file.user_name}) | #{file.size}B</span>
                 <span class='fv-datetime'>#{new Date(1000*file.timestamp)}</span>
             </div>
             <div class='fv-spacer'></div>
