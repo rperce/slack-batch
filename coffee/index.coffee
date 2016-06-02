@@ -343,6 +343,7 @@ do_slack_request = (method, pass, want, callback) ->
         else
             die "Slack API Error: #{data.error}"
     ).fail( (err) ->
+        console.log("Slack API Error: #{err}");
         die "POST Error! See Javascript Console for details."
     )
 
