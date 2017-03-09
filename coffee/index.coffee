@@ -372,7 +372,7 @@ fields = {
     'time': {
         'use': 'query',
         'ops': op_all,
-        'valid': (time) -> !isNan(new Date(time).getTime())
+        'valid': (time) -> !isNaN(new Date(time).getTime())
         'valid_text': "Anything that works with Javascript's new Date(). The format '#{new Date()}' is guaranteed to work."
     },
     'type': {
