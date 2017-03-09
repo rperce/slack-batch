@@ -166,11 +166,15 @@ generate_request = (params, callback) ->
     else
         return do_request(params, callback, submit, ids)
 
+
+time_to_unix_epoch = (str) ->
+    Math.floor((new Date(str).getTime())/1000)
+
 do_request = (params, callback, submit, users) ->
     users.push(undefined) if users.length == 0
     for user in users
-        submit.ts_from = _val(params.time) if _.contains(['>', '_'], _op(params.time))
-        submit.ts_to = _val(params.time) if _.contains(['<', '_'], _op(params.time))
+        submit.ts_from = time_to_unix_epoch(_val(params.time)) if _.contains(['>', '_'], _op(params.time))
+        submit.ts_to = time_to_unix_epoch(_val(params.time)) if _.contains(['<', '_'], _op(params.time))
         submit.user = user if user
         types = _val(params.type) if _.contains(['_','!'], _op(params.type))
         if types
@@ -180,6 +184,7 @@ do_request = (params, callback, submit, users) ->
             submit.types = _(types).map((str) -> str.trim()).join(',')
         submit.count = 100
         submit.count = _val(params.limit) if '_' == _op(params.limit)
+        console.log(submit)
         do_slack_request('files.list', submit, 'files', callback)
 
 toBytes = (size) ->
@@ -333,7 +338,7 @@ die = (error) ->
     $('#data').html("<div class='error'>#{error}</div>")
 
 do_slack_request = (method, pass, want, callback) ->
-    #console.log("pass:\n#{_(pass).map((v,k)->"  :: #{k}: #{v}").join("\n")}")
+    console.log("pass:\n#{_(pass).map((v,k)->"  :: #{k}: #{v}").join("\n")}")
     pass.token = params.token
     $.post(
         "https://slack.com/api/#{method}", pass
